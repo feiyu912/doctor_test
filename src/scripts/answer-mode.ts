@@ -60,17 +60,6 @@ function applyMode(mode: AnswerMode, persist: boolean): void {
   window.dispatchEvent(new CustomEvent("answer-mode-change", { detail: { mode } }));
 }
 
-function openPreferenceDialog(dialog: HTMLDialogElement): void {
-  const input = dialog.querySelector<HTMLInputElement>(`input[name="answerMode"][value="${getMode()}"]`);
-  if (input) input.checked = true;
-
-  if (typeof dialog.showModal === "function") {
-    dialog.showModal();
-  } else {
-    dialog.setAttribute("open", "");
-  }
-}
-
 function readDialogMode(dialog: HTMLDialogElement): AnswerMode {
   const selectedMode = dialog.querySelector<HTMLInputElement>('input[name="answerMode"]:checked')?.value ?? null;
   return isAnswerMode(selectedMode) ? selectedMode : DEFAULT_MODE;
@@ -78,9 +67,7 @@ function readDialogMode(dialog: HTMLDialogElement): AnswerMode {
 
 function initPreferenceDialog(): void {
   const dialog = document.querySelector<HTMLDialogElement>("[data-answer-preference-dialog]");
-  if (!dialog || getStoredMode()) return;
-
-  openPreferenceDialog(dialog);
+  if (!dialog) return;
 
   dialog.addEventListener("close", () => {
     applyMode(readDialogMode(dialog), true);

@@ -275,6 +275,10 @@ h1 {
   padding: 18px;
 }
 
+.filter-backdrop {
+  display: none;
+}
+
 .filter-panel label {
   display: grid;
   gap: 6px;
@@ -601,6 +605,14 @@ select {
     width: 100%;
   }
 
+  .search-shortcut {
+    display: none;
+  }
+
+  .topbar-tools {
+    gap: 8px;
+  }
+
   .hero,
   .two-column {
     grid-template-columns: 1fr;
@@ -612,12 +624,36 @@ select {
     z-index: 30;
     width: min(360px, 92vw);
     overflow: auto;
+    pointer-events: none;
     transform: translateX(105%);
     transition: transform 160ms ease;
   }
 
   .filter-panel.is-open {
+    pointer-events: auto;
     transform: translateX(0);
+  }
+
+  .filter-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 29;
+    display: block;
+    border: 0;
+    padding: 0;
+    background: rgb(0 0 0 / 35%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 160ms ease;
+  }
+
+  body.filter-panel-open .filter-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body.filter-panel-open {
+    overflow: hidden;
   }
 
   .mobile-only {
