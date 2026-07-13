@@ -83,7 +83,6 @@ function applyFilters(params: URLSearchParams): void {
 }
 
 function togglePanel(open: boolean): void {
-  document.body.classList.toggle("filter-panel-open", open);
   document.querySelectorAll<HTMLElement>("[data-filter-panel]").forEach((panel) => {
     panel.dataset.open = String(open);
     panel.classList.toggle("is-open", open);
@@ -102,7 +101,6 @@ function init(): void {
     const params = readFiltersFromControls();
     updateUrl(params);
     applyFilters(params);
-    if (window.matchMedia("(max-width: 820px)").matches) togglePanel(false);
   });
 
   document.addEventListener("click", (event) => {
@@ -125,10 +123,6 @@ function init(): void {
     }
 
     if (target.closest("[data-filter-close]")) togglePanel(false);
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") togglePanel(false);
   });
 }
 
