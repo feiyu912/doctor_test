@@ -242,6 +242,7 @@ async function main() {
       chapter: normalizeText(raw.chapterName) || `训练 ${chapterId}`,
       type: getType(raw),
       typeLabel: normalizeText(raw.typeName) || normalizeText(raw.questionType),
+      sharedStem: normalizeText(raw.stem),
       question: normalizeText(raw.question || raw.stem),
       options,
       answer,

@@ -7,6 +7,7 @@ export type Question = {
   chapter: string;
   type: QuestionType;
   typeLabel: string;
+  sharedStem?: string;
   question: string;
   options: Record<string, string>;
   answer: string[];

@@ -31,6 +31,12 @@ const imageSrc = question.image ? withBase(question.image) : "";
     <span class="pill">{question.typeLabel}</span>
     {question.image && <span class="pill image-pill">含图片</span>}
   </div>
+  {question.sharedStem && (
+    <section class="shared-stem" aria-label="Shared question stem">
+      <span>共享题干</span>
+      <p>{question.sharedStem}</p>
+    </section>
+  )}
   <h2 class="question-title">
     <a href={withBase(`/questions/${question.id}/`)}>{question.question}</a>
   </h2>

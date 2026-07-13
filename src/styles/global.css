@@ -344,6 +344,26 @@ select {
   color: var(--color-text);
 }
 
+.shared-stem {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-text);
+}
+
+.shared-stem span {
+  display: block;
+  color: var(--color-primary);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.shared-stem p {
+  margin: 6px 0 0;
+  line-height: 1.7;
+}
+
 .question-image {
   margin: 16px 0;
 }
