@@ -1,0 +1,134 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TopBar from "../components/TopBar.astro";
+import AnswerPreferenceDialog from "../components/AnswerPreferenceDialog.astro";
+import ImageLightbox from "../components/ImageLightbox.astro";
+import { questions } from "../lib/questions";
+import { withBase } from "../lib/paths";
+
+const searchIndex = questions.map((question, index) => ({
+  index: index + 1,
+  id: question.id,
+  subject: question.subject,
+  chapter: question.chapter,
+  typeLabel: question.typeLabel,
+  question: question.question,
+  options: Object.entries(question.options).map(([key, value]) => `${key}. ${value}`).join(" "),
+  answer: question.answer.join(""),
+  explanation: question.explanation,
+  hasImage: Boolean(question.image),
+  url: withBase(`/questions/${question.id}/`)
+}));
+---
+<BaseLayout title="搜索｜医学题库" description="使用 Pagefind 搜索医学题库。" noindex>
+  <TopBar />
+  <main class="search-page">
+    <section class="search-panel">
+      <p class="eyebrow">全文搜索</p>
+      <h1>搜索题干、选项、答案和解析</h1>
+      <form class="question-search" data-search-form>
+        <label class="sr-only" for="question-search-input">搜索题库</label>
+        <input id="question-search-input" name="q" type="search" autocomplete="off" placeholder="输入关键词，例如 心肌梗死、胸痛、X线、答案A" data-search-input />
+        <button class="button primary" type="submit">搜索</button>
+      </form>
+      <p class="search-hint">支持题干、选项、答案和解析检索。点击结果可进入单题详情。</p>
+      <div class="search-status" data-search-status>输入关键词后开始搜索。</div>
+      <div class="search-results" data-search-results></div>
+    </section>
+  </main>
+  <script type="module" is:inline define:vars={{ searchIndex }}>
+    const form = document.querySelector("[data-search-form]");
+    const input = document.querySelector("[data-search-input]");
+    const status = document.querySelector("[data-search-status]");
+    const resultsRoot = document.querySelector("[data-search-results]");
+
+    const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      "\"": "&quot;",
+      "'": "&#39;"
+    })[char]);
+
+    const normalize = (value) => String(value ?? "")
+      .toLowerCase()
+      .replace(/\s+/g, "")
+      .replace(/[，。、《》？?！!：:；;（）()[\]【】“”"'`]/g, "");
+
+    const makeExcerpt = (item, keyword) => {
+      const parts = [
+        item.question,
+        item.options,
+        item.explanation,
+        `答案 ${item.answer}`
+      ].filter(Boolean);
+      const source = parts.join(" ");
+      const index = source.indexOf(keyword);
+      if (index < 0) return source.slice(0, 150);
+      return source.slice(Math.max(0, index - 46), index + keyword.length + 88);
+    };
+
+    const renderResults = (query) => {
+      const keyword = query.trim();
+      resultsRoot.innerHTML = "";
+      if (!keyword) {
+        status.textContent = "输入关键词后开始搜索。";
+        return;
+      }
+
+      const normalizedKeyword = normalize(keyword);
+      const items = searchIndex
+        .map((item) => {
+          const haystack = normalize([
+            item.id,
+            item.subject,
+            item.chapter,
+            item.typeLabel,
+            item.question,
+            item.options,
+            item.answer,
+            item.explanation
+          ].join(" "));
+          return { item, hit: haystack.includes(normalizedKeyword) };
+        })
+        .filter((entry) => entry.hit)
+        .map((entry) => entry.item);
+
+      if (items.length === 0) {
+        status.textContent = `没有找到 “${keyword}” 的结果。`;
+        return;
+      }
+
+      const visibleItems = items.slice(0, 80);
+      status.textContent = `找到 ${items.length} 道题，显示前 ${visibleItems.length} 道。`;
+      resultsRoot.innerHTML = visibleItems.map((item) => {
+        const excerpt = makeExcerpt(item, keyword);
+        return `
+            <article class="search-result">
+              <a href="${item.url}">
+                <span class="search-result-title">#${item.index} ${escapeHtml(item.question || item.id)}</span>
+                <span class="search-result-url">${escapeHtml(item.typeLabel)} · 答案 ${escapeHtml(item.answer)}${item.hasImage ? " · 含图片" : ""}</span>
+                <span class="search-result-excerpt">${escapeHtml(excerpt)}</span>
+              </a>
+            </article>
+          `;
+      }).join("");
+    };
+
+    form?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const query = new FormData(form).get("q")?.toString() || "";
+      const url = new URL(window.location.href);
+      if (query.trim()) url.searchParams.set("q", query.trim());
+      else url.searchParams.delete("q");
+      window.history.replaceState(null, "", url);
+      renderResults(query);
+    });
+
+    const initialQuery = new URLSearchParams(window.location.search).get("q") || "";
+    if (input) input.value = initialQuery;
+    if (initialQuery) renderResults(initialQuery);
+  </script>
+  <AnswerPreferenceDialog />
+  <ImageLightbox />
+</BaseLayout>

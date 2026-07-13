@@ -1,0 +1,13 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TopBar from "../components/TopBar.astro";
+import { withBase } from "../lib/paths";
+---
+<BaseLayout title="页面不存在｜医学题库" noindex>
+  <TopBar />
+  <main class="empty-state">
+    <h1>页面不存在</h1>
+    <p>链接可能已经移动，返回题库继续浏览。</p>
+    <a class="button primary" href={withBase("/questions/")}>返回题库</a>
+  </main>
+</BaseLayout>

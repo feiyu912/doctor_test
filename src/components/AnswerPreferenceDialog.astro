@@ -1,0 +1,17 @@
+<dialog class="preference-dialog" data-answer-preference-dialog aria-labelledby="answer-pref-title">
+  <form method="dialog" class="preference-card">
+    <h2 id="answer-pref-title">请选择默认答案显示方式</h2>
+    <p>这个设置会保存在当前浏览器里，之后也可以在顶部工具栏随时切换。</p>
+    <label class="choice-line">
+      <input type="radio" name="answerMode" value="hide" checked />
+      <span>默认隐藏答案</span>
+    </label>
+    <label class="choice-line">
+      <input type="radio" name="answerMode" value="show" />
+      <span>默认显示答案</span>
+    </label>
+    <div class="dialog-actions">
+      <button class="button primary" value="confirm" data-answer-preference-confirm>开始使用</button>
+    </div>
+  </form>
+</dialog>

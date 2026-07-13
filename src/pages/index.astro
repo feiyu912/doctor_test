@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TopBar from "../components/TopBar.astro";
+import AnswerPreferenceDialog from "../components/AnswerPreferenceDialog.astro";
+import ImageLightbox from "../components/ImageLightbox.astro";
+import { getSummary, questions } from "../lib/questions";
+import { withBase } from "../lib/paths";
+
+const summary = getSummary();
+const randomQuestion = questions[Math.floor(Math.random() * Math.max(questions.length, 1))];
+---
+<BaseLayout title="医学题库｜第五篇习题集" description="西医医师第五篇习题集静态题库，支持搜索、筛选、答案模式和读片题图片预览。">
+  <TopBar />
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">西医医师 / 第五篇习题集</p>
+        <h1>医学题库</h1>
+        <p class="hero-copy">轻量、可搜索、可分享的静态医学题库，适合小团队在 GitHub Pages 上直接使用。</p>
+        <div class="hero-actions">
+          <a class="button primary" href={withBase("/questions/")}>开始刷题</a>
+          <a class="button" href={withBase("/search/")}>全文搜索</a>
+          {randomQuestion && <a class="button ghost" href={withBase(`/questions/${randomQuestion.id}/`)}>随机题目</a>}
+        </div>
+      </div>
+      <div class="stat-grid" aria-label="题库统计">
+        <div><strong>{summary.total}</strong><span>题目/小题</span></div>
+        <div><strong>{summary.subjects.length}</strong><span>科目</span></div>
+        <div><strong>{summary.imageCount}</strong><span>含图片</span></div>
+        <div><strong>{summary.explanationCount}</strong><span>含解析</span></div>
+      </div>
+    </section>
+    <section class="home-section">
+      <div class="section-title">
+        <h2>题型入口</h2>
+        <a href={withBase("/questions/")}>查看全部</a>
+      </div>
+      <div class="entry-grid">
+        {summary.types.map((type) => (
+          <a class="entry-card" href={withBase(`/questions/?type=${encodeURIComponent(type)}`)}>
+            <span>{type}</span>
+            <small>按题型筛选</small>
+          </a>
+        ))}
+      </div>
+    </section>
+    <section class="home-section">
+      <div class="section-title">
+        <h2>章节入口</h2>
+      </div>
+      <div class="entry-grid">
+        {summary.chapters.map((chapter) => (
+          <a class="entry-card" href={withBase(`/questions/?chapter=${encodeURIComponent(chapter)}`)}>
+            <span>{chapter}</span>
+            <small>进入章节</small>
+          </a>
+        ))}
+      </div>
+    </section>
+  </main>
+  <AnswerPreferenceDialog />
+  <ImageLightbox />
+</BaseLayout>

@@ -1,0 +1,58 @@
+---
+import "../styles/tokens.css";
+import "../styles/global.css";
+import { canonicalPath, withBase } from "../lib/paths";
+
+type Props = {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+};
+
+const {
+  title = "医学题库",
+  description = "面向医学训练的轻量静态题库，支持搜索、筛选、答案显示模式和读片题图片预览。",
+  noindex = false
+} = Astro.props;
+
+const canonical = canonicalPath(Astro.url.pathname);
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={withBase("/favicon.svg")} type="image/svg+xml" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <script is:inline>
+      (() => {
+        try {
+          const stored = localStorage.getItem("medical-question-bank:theme");
+          const theme = stored || "system";
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          document.documentElement.dataset.theme = theme === "system" ? (prefersDark ? "dark" : "light") : theme;
+        } catch {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+    <script>
+      import "../scripts/theme";
+      import "../scripts/answer-mode";
+      import "../scripts/question-options";
+      import "../scripts/image-lightbox";
+      import "../scripts/filters";
+    </script>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import TopBar from "../../components/TopBar.astro";
+import QuestionCard from "../../components/QuestionCard.astro";
+import AnswerPreferenceDialog from "../../components/AnswerPreferenceDialog.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { adjacentQuestion, questions } from "../../lib/questions";
+import { withBase } from "../../lib/paths";
+
+export function getStaticPaths() {
+  return questions.map((question) => ({ params: { id: question.id }, props: { question } }));
+}
+
+const { question } = Astro.props;
+const { previous, next } = adjacentQuestion(question.id);
+---
+<BaseLayout title={`题目 ${question.id}｜医学题库`} description={question.question}>
+  <TopBar />
+  <main class="detail-shell" data-pagefind-body>
+    <div class="detail-nav">
+      <a class="button ghost" href={withBase("/questions/")}>返回列表</a>
+      <button class="button ghost" type="button" data-copy-link>复制链接</button>
+    </div>
+    <QuestionCard question={question} />
+    <nav class="detail-nav" aria-label="相邻题目">
+      {previous ? <a class="button" href={withBase(`/questions/${previous.id}/`)}>上一题</a> : <span></span>}
+      {next ? <a class="button" href={withBase(`/questions/${next.id}/`)}>下一题</a> : <span></span>}
+    </nav>
+  </main>
+  <AnswerPreferenceDialog />
+  <ImageLightbox />
+</BaseLayout>

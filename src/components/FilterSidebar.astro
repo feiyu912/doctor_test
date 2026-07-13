@@ -1,0 +1,61 @@
+---
+type Props = {
+  subjects: string[];
+  chapters: string[];
+  types: string[];
+  tags: string[];
+};
+
+const { subjects, chapters, types, tags } = Astro.props;
+---
+<aside class="filter-panel" data-filter-panel>
+  <div class="filter-head">
+    <h2>筛选</h2>
+    <button class="icon-button mobile-only" type="button" data-filter-close>关闭</button>
+  </div>
+  <label>
+    科目
+    <select data-filter="subject">
+      <option value="">全部科目</option>
+      {subjects.map((item) => <option value={item}>{item}</option>)}
+    </select>
+  </label>
+  <label>
+    章节
+    <select data-filter="chapter">
+      <option value="">全部章节</option>
+      {chapters.map((item) => <option value={item}>{item}</option>)}
+    </select>
+  </label>
+  <label>
+    题型
+    <select data-filter="type">
+      <option value="">全部题型</option>
+      {types.map((item) => <option value={item}>{item}</option>)}
+    </select>
+  </label>
+  <label>
+    标签
+    <select data-filter="tag">
+      <option value="">全部标签</option>
+      {tags.map((item) => <option value={item}>{item}</option>)}
+    </select>
+  </label>
+  <label>
+    图片
+    <select data-filter="image">
+      <option value="">不限</option>
+      <option value="true">含图片</option>
+      <option value="false">不含图片</option>
+    </select>
+  </label>
+  <label>
+    解析
+    <select data-filter="explanation">
+      <option value="">不限</option>
+      <option value="true">含解析</option>
+      <option value="false">不含解析</option>
+    </select>
+  </label>
+  <button class="button ghost" type="button" data-filter-reset>重置筛选</button>
+</aside>

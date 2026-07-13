@@ -1,0 +1,78 @@
+---
+import type { Question } from "../data/questions-schema";
+import { withBase } from "../lib/paths";
+
+type Props = {
+  question: Question;
+  index?: number;
+  compact?: boolean;
+};
+
+const { question, index, compact = false } = Astro.props;
+const answerId = `answer-${question.id}`;
+const isMulti = question.answer.length > 1 || question.type === "multiple-choice" || question.type === "case";
+const inputType = isMulti ? "checkbox" : "radio";
+const imageSrc = question.image ? withBase(question.image) : "";
+---
+<article
+  class:list={["question-card", compact && "question-card-compact"]}
+  data-question-card
+  data-subject={question.subject}
+  data-chapter={question.chapter}
+  data-type={question.typeLabel}
+  data-has-image={question.image ? "true" : "false"}
+  data-has-explanation={question.explanation ? "true" : "false"}
+  data-tags={question.tags.join(",")}
+>
+  <div class="question-meta">
+    <span class="pill">#{index ?? question.id}</span>
+    <span class="pill">{question.subject}</span>
+    <span class="pill">{question.chapter}</span>
+    <span class="pill">{question.typeLabel}</span>
+    {question.image && <span class="pill image-pill">含图片</span>}
+  </div>
+  <h2 class="question-title">
+    <a href={withBase(`/questions/${question.id}/`)}>{question.question}</a>
+  </h2>
+  {question.image && (
+    <figure class="question-image">
+      <button type="button" data-lightbox-open data-image-src={imageSrc} data-image-alt={question.imageAlt || "医学题目图片"}>
+        <img src={imageSrc} alt={question.imageAlt || "医学题目图片"} loading="lazy" width="720" height="420" />
+      </button>
+      <figcaption>{question.imageAlt || "医学读片题图片"}</figcaption>
+    </figure>
+  )}
+  <div class="options" data-option-group data-question-id={question.id} data-input-type={inputType}>
+    {Object.entries(question.options).map(([key, value]) => (
+      <button
+        type="button"
+        class="option"
+        data-option-key={key}
+        data-correct={question.answer.includes(key) ? "true" : "false"}
+        aria-pressed="false"
+      >
+        <span class="option-key">{key}</span>
+        <span>{value}</span>
+        <span class="option-feedback" aria-hidden="true"></span>
+      </button>
+    ))}
+  </div>
+  <div class="question-actions">
+    <button class="button" type="button" data-answer-toggle aria-expanded="false" aria-controls={answerId}>显示答案</button>
+    <button class="button ghost" type="button" data-clear-selection>清除选择</button>
+    <a class="button ghost" href={withBase(`/questions/${question.id}/`)}>打开详情</a>
+  </div>
+  <section id={answerId} class="answer-panel" data-answer-panel hidden>
+    <h3>正确答案</h3>
+    <p class="answer-text">{question.answer.join("、")}</p>
+    {question.explanation ? (
+      <>
+        <h3>解析</h3>
+        <p>{question.explanation}</p>
+      </>
+    ) : (
+      <p class="muted">暂无解析。</p>
+    )}
+    {question.source && <p class="source">来源：{question.source}</p>}
+  </section>
+</article>

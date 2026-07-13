@@ -1,0 +1,23 @@
+---
+import { withBase } from "../lib/paths";
+---
+<header class="topbar">
+  <a class="brand" href={withBase("/")}>
+    <span class="brand-mark" aria-hidden="true">＋</span>
+    <span>医学题库</span>
+  </a>
+  <nav class="topbar-nav" aria-label="主导航">
+    <a href={withBase("/questions/")}>题库</a>
+    <a href={withBase("/search/")}>搜索</a>
+  </nav>
+  <div class="topbar-tools">
+    <a class="search-shortcut" href={withBase("/search/")}>搜索</a>
+    <fieldset class="segmented" aria-label="答案模式">
+      <legend class="sr-only">答案模式</legend>
+      <button type="button" data-answer-mode-set="hide">隐藏答案</button>
+      <button type="button" data-answer-mode-set="show">显示答案</button>
+    </fieldset>
+    <button class="icon-button" type="button" data-theme-toggle aria-label="切换深色模式">深色</button>
+    <button class="icon-button mobile-only" type="button" data-filter-open aria-label="打开筛选">筛选</button>
+  </div>
+</header>
